@@ -5,7 +5,7 @@
 #include "CPPToJavaInStream.h"
 #include "UnicodeHelper.h"
 
-STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROPVARIANT *value) {
+STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROPVARIANT *value) noexcept {
     TRACE_OBJECT_CALL("GetProperty");
 
     TRACE("GetProperty(" << propID << ')')
@@ -33,7 +33,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
 }
 
 STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
-                                                           IInStream **inStream) {
+                                                           IInStream **inStream) noexcept {
     TRACE_OBJECT_CALL("GetStream");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);

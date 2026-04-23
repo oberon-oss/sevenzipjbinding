@@ -51,9 +51,19 @@
  }
  */
 
+STDMETHODIMP CPPToJavaArchiveExtractCallback::CryptoGetTextPassword(BSTR *password) noexcept {
+    TRACE_OBJECT_CALL("CryptoGetTextPassword");
+
+    if (_cryptoGetTextPasswordImpl) {
+        return _cryptoGetTextPasswordImpl->CryptoGetTextPassword(password);
+    }
+
+    return E_NOINTERFACE;
+}
+
 STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
                                                         ISequentialOutStream **outStream,
-                                                        Int32 askExtractMode) {
+                                                        Int32 askExtractMode) noexcept {
     TRACE_OBJECT_CALL("GetStream");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
@@ -87,7 +97,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractMode) {
+STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractMode) noexcept {
     TRACE_OBJECT_CALL("PrepareOperation");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
@@ -105,7 +115,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOperationResult) {
+STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOperationResult) noexcept {
     TRACE_OBJECT_CALL("SetOperationResult");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);

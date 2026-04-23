@@ -4,7 +4,7 @@
 #include "CPPToJavaCryptoGetTextPassword.h"
 #include "UnicodeHelper.h"
 
-STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * password) {
+STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * password) noexcept {
     TRACE_OBJECT_CALL("CryptoGetTextPassword");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);

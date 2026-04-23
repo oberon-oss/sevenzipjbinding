@@ -227,7 +227,7 @@ bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & f
 jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant) {
 
     UString string;
-    ConvertPropertyToString(string, propVariant, propID, true);
+    ConvertPropertyToString2(string, propVariant, propID, 5);
     return ToJChar(string).toNewString(env);
 }
 
@@ -238,7 +238,7 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
     if (object) {
         if (jniEnvInstance->IsInstanceOf(object, g_IntegerClass)) {
             jint value = jniEnvInstance->CallIntMethod(object, g_IntegerIntValue);
-            cPropVariant = (Int32) value;
+            cPropVariant.Set_Int32(value);
         } else if (jniEnvInstance->IsInstanceOf(object, g_StringClass)) {
             cPropVariant = UString(FromJChar(jniEnvInstance, (jstring)object));
         } else if (jniEnvInstance->IsInstanceOf(object, g_BooleanClass)) {

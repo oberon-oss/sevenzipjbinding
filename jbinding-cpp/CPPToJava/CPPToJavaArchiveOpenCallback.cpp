@@ -3,7 +3,7 @@
 #include "JNITools.h"
 #include "CPPToJavaArchiveOpenCallback.h"
 
-STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, const UInt64 *bytes) {
+STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, const UInt64 *bytes) noexcept {
     TRACE_OBJECT_CALL("SetCompleted");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
@@ -33,7 +33,7 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, con
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const UInt64 *bytes) {
+STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const UInt64 *bytes) noexcept {
     TRACE_OBJECT_CALL("SetTotal");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);

@@ -41,47 +41,47 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
     }
 }
 
-STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
-{
-    TRACE_OBJECT_CALL("QueryInterface")
-//    TRACE1("UniversalArchiveOpencallback::QueryInterface(%i)", iid)
-//    TRACE2("UniversalArchiveOpencallback::QueryInterface(%x,%x)", (int)iid.Data4[3], (int)iid.Data4[5])
-//    TRACE1("_archiveOpenVolumeCallback=0x%08X", (size_t)_archiveOpenVolumeCallback)
-
-    if (iid == IID_IArchiveOpenCallback)
-    {
-        *outObject = (void *)(IArchiveOpenCallback *)this;
-        AddRef();
-        return S_OK;
-    }
-
-    // The special case for CAB archives get handled here.
-    // The problem with the CAB implementation is, that the
-    // extraction routine calls IArchiveOpenVolumeCallback
-    // methods without ever testing, whether the interface
-    // is implemented in the first place. 
-    //
-    // The solution is to provide a C++ side dummy
-    // implementation of the interface and raise the
-    // exception there, if not real implementation was
-    // provided.
-    if (_simulateArchiveOpenVolumeCallback ||
-            (memcmp(&iid, &IID_IArchiveOpenVolumeCallback, sizeof(GUID)) == 0 && _archiveOpenVolumeCallback))
-    {
-//    	TRACE("OpenVolume")
-        *outObject = (void *)(IArchiveOpenVolumeCallback *)this;
-        AddRef();
-        return S_OK;
-    }
-
-    if (iid == IID_ICryptoGetTextPassword && _cryptoGetTextPassword)
-    {
-//    	TRACE("CryptoGetTextPassword")
-        *outObject = (void *)(ICryptoGetTextPassword *)this;
-        AddRef();
-        return S_OK;
-    }
-
-    TRACE("Nothing found. Returning E_NOINTERFACE")
-    return E_NOINTERFACE;
-}
+// STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
+// {
+//     TRACE_OBJECT_CALL("QueryInterface")
+// //    TRACE1("UniversalArchiveOpencallback::QueryInterface(%i)", iid)
+// //    TRACE2("UniversalArchiveOpencallback::QueryInterface(%x,%x)", (int)iid.Data4[3], (int)iid.Data4[5])
+// //    TRACE1("_archiveOpenVolumeCallback=0x%08X", (size_t)_archiveOpenVolumeCallback)
+//
+//     if (iid == IID_IArchiveOpenCallback)
+//     {
+//         *outObject = (void *)(IArchiveOpenCallback *)this;
+//         AddRef();
+//         return S_OK;
+//     }
+//
+//     // The special case for CAB archives get handled here.
+//     // The problem with the CAB implementation is, that the
+//     // extraction routine calls IArchiveOpenVolumeCallback
+//     // methods without ever testing, whether the interface
+//     // is implemented in the first place. 
+//     //
+//     // The solution is to provide a C++ side dummy
+//     // implementation of the interface and raise the
+//     // exception there, if not real implementation was
+//     // provided.
+//     if (_simulateArchiveOpenVolumeCallback ||
+//             (memcmp(&iid, &IID_IArchiveOpenVolumeCallback, sizeof(GUID)) == 0 && _archiveOpenVolumeCallback))
+//     {
+// //    	TRACE("OpenVolume")
+//         *outObject = (void *)(IArchiveOpenVolumeCallback *)this;
+//         AddRef();
+//         return S_OK;
+//     }
+//
+//     if (iid == IID_ICryptoGetTextPassword && _cryptoGetTextPassword)
+//     {
+// //    	TRACE("CryptoGetTextPassword")
+//         *outObject = (void *)(ICryptoGetTextPassword *)this;
+//         AddRef();
+//         return S_OK;
+//     }
+//
+//     TRACE("Nothing found. Returning E_NOINTERFACE")
+//     return E_NOINTERFACE;
+// }

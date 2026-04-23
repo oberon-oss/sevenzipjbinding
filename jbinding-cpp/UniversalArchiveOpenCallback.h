@@ -7,12 +7,11 @@
 #include "CPPToJava/CPPToJavaCryptoGetTextPassword.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 
-class UniversalArchiveOpencallback :
-    public IArchiveOpenCallback,
-    public IArchiveOpenVolumeCallback,
-    public ICryptoGetTextPassword,
-    public CMyUnknownImp,
-    public Object
+class UniversalArchiveOpencallback : public virtual IArchiveOpenCallback,
+                                     public virtual IArchiveOpenVolumeCallback,
+                                     public virtual ICryptoGetTextPassword,
+                                     public virtual CMyUnknownImp,
+                                     public Object
 {
 private:
     IArchiveOpenCallback * _archiveOpenCallback;
@@ -24,7 +23,6 @@ private:
     		jobject archiveOpenCallbackImpl);
 
 public:
-
     UniversalArchiveOpencallback(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
     {
         TRACE_OBJECT_CREATION("UniversalArchiveOpencallback")
@@ -51,28 +49,28 @@ public:
         _simulateArchiveOpenVolumeCallback = value;
     }
 
-    STDMETHOD(QueryInterface)(REFGUID iid, void **outObject);
+    // STDMETHOD(QueryInterface)(REFGUID iid, void **outObject);
+    //
+    // STDMETHOD_(ULONG, AddRef)()
+    // {
+    //     return ++__m_RefCount;
+    // }
+    // STDMETHOD_(ULONG, Release)()
+    // {
+    //     if (--__m_RefCount != 0)
+    //         return __m_RefCount;
+    //     delete this;
+    //     return 0;
+    // }
 
-    STDMETHOD_(ULONG, AddRef)()
-    {
-        return ++__m_RefCount;
-    }
-    STDMETHOD_(ULONG, Release)()
-    {
-        if (--__m_RefCount != 0)
-            return __m_RefCount;
-        delete this;
-        return 0;
-    }
-
-    STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes)
+    STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes) noexcept Z7_override
     {
         TRACE_OBJECT_CALL("SetTotal")
         TRACE("UniversalArchiveOpencallback::SetTotal")
 
         return _archiveOpenCallback->SetTotal(files, bytes);
     }
-    STDMETHOD(SetCompleted)(const UInt64 *files, const UInt64 *bytes)
+    STDMETHOD(SetCompleted)(const UInt64 *files, const UInt64 *bytes) noexcept Z7_override
     {
         TRACE_OBJECT_CALL("SetCompleted")
         TRACE("UniversalArchiveOpencallback::SetCompleted")
@@ -80,7 +78,7 @@ public:
         return _archiveOpenCallback->SetCompleted(files, bytes);
     }
 
-    STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value)
+    STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value) noexcept Z7_override
     {
         TRACE_OBJECT_CALL("GetProperty")
         TRACE("UniversalArchiveOpencallback::GetProperty")
@@ -93,7 +91,7 @@ public:
         // IArchiveOpenCallback implementation must also implement IArchiveOpenVolumeCallback
         return E_NOINTERFACE;
     }
-    STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream)
+    STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream) noexcept Z7_override
     {
         TRACE_OBJECT_CALL("GetStream")
         TRACE("UniversalArchiveOpencallback::GetStream")
@@ -107,7 +105,7 @@ public:
         return E_NOINTERFACE;
     }
 
-    STDMETHOD(CryptoGetTextPassword)(BSTR *password)
+    STDMETHOD(CryptoGetTextPassword)(BSTR *password) noexcept Z7_override
     {
         TRACE_OBJECT_CALL("CryptoGetTextPassword")
         TRACE("UniversalArchiveOpencallback::CryptoGetTextPassword")
@@ -118,5 +116,9 @@ public:
         }
         return E_NOINTERFACE;
     }
+
+private:
+    Z7_COM_UNKNOWN_IMP_1(IArchiveOpenCallback)
+    // Z7_COM_UNKNOWN_IMP_3(IArchiveOpenCallback, IArchiveOpenVolumeCallback, ICryptoGetTextPassword)
 };
 #endif /*UNIVERSALARCHIVEOPENCALLBACK_*/

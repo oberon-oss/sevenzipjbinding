@@ -4,23 +4,29 @@
 #include "CPPToJavaAbstract.h"
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 
-class CPPToJavaCryptoGetTextPassword : public CPPToJavaAbstract, public virtual ICryptoGetTextPassword,
-    public CMyUnknownImp
+class CPPToJavaCryptoGetTextPassword :
+    public virtual CPPToJavaAbstract,
+    public virtual ICryptoGetTextPassword,
+    public virtual CMyUnknownImp
 {
-
 private:
     jni::ICryptoGetTextPassword * _iCryptoGetTextPassword;
-public:
-    MY_UNKNOWN_IMP
 
-    CPPToJavaCryptoGetTextPassword(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject cryptoGetTextPassword) :
-        CPPToJavaAbstract(jbindingSession, initEnv, cryptoGetTextPassword),
-                _iCryptoGetTextPassword(jni::ICryptoGetTextPassword::_getInstanceFromObject(initEnv, cryptoGetTextPassword))
+public:
+    CPPToJavaCryptoGetTextPassword(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject cryptoGetTextPassword)
+        : CPPToJavaAbstract(jbindingSession, initEnv, cryptoGetTextPassword),
+          _iCryptoGetTextPassword(jni::ICryptoGetTextPassword::_getInstanceFromObject(initEnv, cryptoGetTextPassword))
     {
         TRACE_OBJECT_CREATION("CPPToJavaCryptoGetTextPassword")
     }
 
-    STDMETHOD(CryptoGetTextPassword)(BSTR *password);
+    virtual ~CPPToJavaCryptoGetTextPassword() {}
+
+public:
+    Z7_IFACE_COM7_IMP_NONFINAL(ICryptoGetTextPassword)
+
+private:
+    Z7_COM_UNKNOWN_IMP_1(ICryptoGetTextPassword)
 };
 
-#endif /*CPPTOJAVACRYPTOGETTEXTPASSWORD_H_*/
+#endif /* CPPTOJAVACRYPTOGETTEXTPASSWORD_H_ */

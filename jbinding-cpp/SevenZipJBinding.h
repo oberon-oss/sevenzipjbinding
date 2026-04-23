@@ -5,6 +5,8 @@
 
 #include "Common/IntToString.h"
 
+#include "CPP/Common/MyTypes.h"
+#include "7zip/IDecl.h"
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
 #include "7zip/UI/Common/PropIDUtils.h"
 #include "7zip/Common/FileStreams.h"
@@ -20,9 +22,6 @@
 
 #define SEVENZIPJBINDING_VERSION_MAJOR 0
 #define SEVENZIPJBINDING_VERSION_MINOR 5
-
-#define SEVENZIPJBINDING_LIBRARY_NAME_FILENAME "./7z.dll"
-
 
 #define SEVEN_ZIP_EXCEPTION "net/sf/sevenzipjbinding/SevenZipException"
 #define SEVEN_ZIP_EXCEPTION_T JAVA_MAKE_SIGNATURE_TYPE(SEVEN_ZIP_EXCEPTION)
@@ -130,6 +129,24 @@ public:
 };
 
 
+Z7_PURE_INTERFACES_BEGIN
+
+// TODO Check the value 0x0A. It should be free to use
+//
+#define Z7_IFACE_CONSTR_JBINDING_SUB(i, base, n) \
+  Z7_DECL_IFACE_7ZIP_SUB(i, base, 0x0A, n) \
+  { Z7_IFACE_COM7_PURE(i) };
+
+#define Z7_IFACE_CONSTR_JBINDING(i, n) \
+  Z7_IFACE_CONSTR_JBINDING_SUB(i, IUnknown, n)
+
+/* #define Z7_IFACEM_IArchiveOpenCallback(x) \ */
+/*   x(SetTotal(const UInt64 *files, const UInt64 *bytes)) \ */
+/*   x(SetCompleted(const UInt64 *files, const UInt64 *bytes)) \ */
+
+/* Z7_IFACE_CONSTR_JBINDING(IArchiveOpenCallback, 0x10) */
+
+Z7_PURE_INTERFACES_END
 
 #include "JavaStaticInfo.h" // TODO Move from here
 #include "JavaStatInfos/JavaStandardLibrary.h" // TODO Move from here

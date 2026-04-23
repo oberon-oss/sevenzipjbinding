@@ -2,8 +2,10 @@
 #define CPPTOJAVAABSTRACT_H_
 
 #include <stack>
+#include "SevenZipJBinding.h"
 #include "Debug.h"
 #include "JBindingTools.h"
+
 
 class CPPToJavaAbstract : public Object {
 protected:
@@ -26,6 +28,7 @@ protected:
         jniEnvInstance->DeleteGlobalRef(_javaImplementation);
     }
 };
+
 
 #endif /*CPPTOJAVAABSTRACT_H_*/
 

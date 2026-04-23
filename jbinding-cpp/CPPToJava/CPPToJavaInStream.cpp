@@ -3,7 +3,11 @@
 #include "JNITools.h"
 #include "CPPToJavaInStream.h"
 
-STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
+STDMETHODIMP CPPToJavaInStream::Read(void *data, UInt32 size, UInt32 *processedSize) noexcept {
+    return this->_sequentialInStream.Read(data, size, processedSize);
+}
+
+STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) noexcept {
     TRACE_OBJECT_CALL("Seek");
 
     TRACE("SEEK(offset=" << offset << ", origin=" << seekOrigin << ")");
@@ -29,4 +33,9 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
 
     return S_OK;
 }
+
+// STDMETHODIMP CPPToJavaInStream::Read(void* data, UInt32 size, UInt32* processedSize) noexcept
+// {
+//     return CPPToJavaSequentialInStream::Read(data, size, processedSize);
+// }
 

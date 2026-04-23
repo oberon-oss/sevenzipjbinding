@@ -7,12 +7,15 @@
 
 #include "7zip/IPassword.h"
 
-class CPPToJavaArchiveUpdateCallback : public virtual IArchiveUpdateCallback,
-        public CPPToJavaProgress,
-		public ICryptoGetTextPassword2,
-		public ICryptoGetTextPassword {
+class CPPToJavaArchiveUpdateCallback :
+    public CPPToJavaAbstract,
+    public virtual IArchiveUpdateCallback,
+	public virtual ICryptoGetTextPassword2,
+	public virtual ICryptoGetTextPassword,
+    public virtual CMyUnknownImp {
 
 private:
+    CPPToJavaProgress _progress;
     jni::IOutCreateCallback * _iOutCreateCallback;
     jobject _outItem;
     int _outItemLastIndex;
@@ -26,80 +29,98 @@ public:
     CPPToJavaArchiveUpdateCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
                                    jobject archiveUpdateCallback, bool isInArchiveAttached,
                                    int archiveFormatIndex, jobject outArchive) :
-        CPPToJavaProgress(jbindingSession, initEnv, archiveUpdateCallback),
-            _iOutCreateCallback(jni::IOutCreateCallback::_getInstanceFromObject(
-                        initEnv, archiveUpdateCallback)),
-				_outItemLastIndex(-1),
-				_archiveFormatIndex(archiveFormatIndex),
-				_outItem(NULL),
-				_outArchive(outArchive),
-				_isInArchiveAttached(isInArchiveAttached),
-                _isICryptoGetTextPasswordImplemented(-1),
-                _cryptoGetTextPassword(NULL) {
+            CPPToJavaAbstract(jbindingSession, initEnv, archiveUpdateCallback),
+            _progress(jbindingSession, initEnv, archiveUpdateCallback),
+            _iOutCreateCallback(jni::IOutCreateCallback::_getInstanceFromObject(initEnv, archiveUpdateCallback)),
+		    _outItemLastIndex(-1),
+		    _archiveFormatIndex(archiveFormatIndex),
+		    _outItem(NULL),
+		    _outArchive(outArchive),
+		    _isInArchiveAttached(isInArchiveAttached),
+            _isICryptoGetTextPasswordImplemented(-1),
+            _cryptoGetTextPassword(NULL)
+    {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
 
         _isICryptoGetTextPasswordImplemented = jni::ICryptoGetTextPassword::_isInstance(initEnv, _javaImplementation);
 		JNIEnvInstance jniEnvInstance(_jbindingSession);
     }
 
-    STDMETHOD(GetUpdateItemInfo)(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
-    Int32 *newProperties, /* 1 - new properties, 0 - old properties */
-    UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
-    );
+    // STDMETHOD(GetUpdateItemInfo)(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
+    // Int32 *newProperties, /* 1 - new properties, 0 - old properties */
+    // UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
+    // );
 
-    STDMETHOD(GetProperty)(UInt32 index, PROPID propID, PROPVARIANT *value);
-    STDMETHOD(GetStream)(UInt32 index, ISequentialInStream **inStream);
-    STDMETHOD(SetOperationResult)(Int32 operationResult);
-    STDMETHOD(CryptoGetTextPassword)(BSTR *password);
-    STDMETHOD(CryptoGetTextPassword2)(Int32 *passwordIsDefined, BSTR *password);
+    // STDMETHOD(GetProperty)(UInt32 index, PROPID propID, PROPVARIANT *value);
+    // STDMETHOD(GetStream)(UInt32 index, ISequentialInStream **inStream);
+    // STDMETHOD(SetOperationResult)(Int32 operationResult);
+    // STDMETHOD(CryptoGetTextPassword)(BSTR *password);
+    // STDMETHOD(CryptoGetTextPassword2)(Int32 *passwordIsDefined, BSTR *password);
 
-    STDMETHOD(SetTotal)(UInt64 total) {
-        TRACE_OBJECT_CALL("SetTotal");
-        return CPPToJavaProgress::SetTotal(total);
-    }
+    // STDMETHOD(SetTotal)(UInt64 total) {
+    //     TRACE_OBJECT_CALL("SetTotal");
+    //     return CPPToJavaProgress::SetTotal(total);
+    // }
+    //
+    // STDMETHOD(SetCompleted)(const UInt64 *completeValue) {
+    //     TRACE_OBJECT_CALL("SetCompleted");
+    //     return CPPToJavaProgress::SetCompleted(completeValue);
+    // }
 
-    STDMETHOD(SetCompleted)(const UInt64 *completeValue) {
-        TRACE_OBJECT_CALL("SetCompleted");
-        return CPPToJavaProgress::SetCompleted(completeValue);
-    }
+    // STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) throw() {
+    //     TRACE_OBJECT_CALL("QueryInterface");
+    //
+    //     if ((refguid == IID_ICryptoGetTextPassword) || (refguid == IID_ICryptoGetTextPassword2))
+    //     {
+    //         if (_isICryptoGetTextPasswordImplemented)
+    //         {
+    //         	if (refguid == IID_ICryptoGetTextPassword)
+    //                 *p = (void *)(ICryptoGetTextPassword *)this;
+    //         	else if (refguid == IID_ICryptoGetTextPassword2)
+    //                 *p = (void *)(ICryptoGetTextPassword2 *)this;
+    //         	else
+    //                 return E_NOINTERFACE;
+    //             AddRef();
+    //             return S_OK;
+    //         }
+    //         return E_NOINTERFACE;
+    //     }
+    //
+    //     return CPPToJavaProgress::QueryInterface(refguid, p);
+    // }
+    //
+    // STDMETHOD_(ULONG, AddRef)() throw() {
+    //     TRACE_OBJECT_CALL("AddRef");
+    //     return CPPToJavaProgress::AddRef();
+    // }
+    //
+    // STDMETHOD_(ULONG, Release)() {
+    //     TRACE_OBJECT_CALL("Release");
+    //     return CPPToJavaProgress::Release();
+    // }
+  STDMETHOD(SetTotal)(UInt64 total) noexcept Z7_override {
+    TRACE_OBJECT_CALL("SetTotal");
+    return _progress.SetTotal(total);
+  }
 
-    STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) throw() {
-        TRACE_OBJECT_CALL("QueryInterface");
-
-        if ((refguid == IID_ICryptoGetTextPassword) || (refguid == IID_ICryptoGetTextPassword2))
-        {
-            if (_isICryptoGetTextPasswordImplemented)
-            {
-            	if (refguid == IID_ICryptoGetTextPassword)
-                    *p = (void *)(ICryptoGetTextPassword *)this;
-            	else if (refguid == IID_ICryptoGetTextPassword2)
-                    *p = (void *)(ICryptoGetTextPassword2 *)this;
-            	else
-                    return E_NOINTERFACE;
-                AddRef();
-                return S_OK;
-            }
-            return E_NOINTERFACE;
-        }
-
-        return CPPToJavaProgress::QueryInterface(refguid, p);
-    }
-
-    STDMETHOD_(ULONG, AddRef)() throw() {
-        TRACE_OBJECT_CALL("AddRef");
-        return CPPToJavaProgress::AddRef();
-    }
-
-    STDMETHOD_(ULONG, Release)() {
-        TRACE_OBJECT_CALL("Release");
-        return CPPToJavaProgress::Release();
-    }
+  STDMETHOD(SetCompleted)(const UInt64 *completeValue) noexcept Z7_override {
+    TRACE_OBJECT_CALL("SetCompleted");
+    return _progress.SetCompleted(completeValue);
+  }
 
     void freeOutItem(JNIEnvInstance & jniEnvInstance);
 
 
 private:
     LONG getOrUpdateOutItem(JNIEnvInstance & jniEnvInstance, int index);
+
+public:
+    Z7_IFACE_COM7_IMP_NONFINAL(IArchiveUpdateCallback)
+    Z7_IFACE_COM7_IMP_NONFINAL(ICryptoGetTextPassword)
+    Z7_IFACE_COM7_IMP_NONFINAL(ICryptoGetTextPassword2)
+
+private:
+    Z7_COM_UNKNOWN_IMP_4(IArchiveUpdateCallback, ICryptoGetTextPassword2, ICryptoGetTextPassword, IProgress)
 };
 
 #endif /*CPPTOJAVAARCHIVEUPDATECALLBACK_H_*/

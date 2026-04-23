@@ -60,7 +60,7 @@ LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvI
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
 Int32 *newProperties, /* 1 - new properties, 0 - old properties */
 UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
-) {
+) noexcept {
     TRACE_OBJECT_CALL("GetUpdateItemInfo");
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
@@ -155,7 +155,7 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
 }
 
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID,
-                                                         PROPVARIANT *value) {
+                                                         PROPVARIANT *value) noexcept {
 
 //	#define JNI_TYPE_STRING                              jstring
 //	#define JNI_TYPE_INTEGER                             jobject
@@ -231,7 +231,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     }
 
     if (propID == kpidTimeType) {
-        cPropVariant = NFileTimeType::kWindows;
+        cPropVariant = (UInt32)NFileTimeType::kWindows;
         cPropVariant.Detach(value);
         return S_OK;
     }
@@ -368,7 +368,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequentialInStream **inStream) {
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequentialInStream **inStream) noexcept {
     TRACE_OBJECT_CALL("GetStream");
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
@@ -408,7 +408,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationResult) {
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationResult) noexcept {
     TRACE_OBJECT_CALL("SetOperationResult");
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
@@ -423,7 +423,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationR
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword(BSTR *password) {
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword(BSTR *password) noexcept {
+    TRACE_OBJECT_CALL("CryptoGetTextPassword");
 	Int32 passwordIsDefined;
 	CryptoGetTextPassword2(&passwordIsDefined, password);
 	if (!passwordIsDefined) {
@@ -432,7 +433,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword(BSTR *passwor
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passwordIsDefined, BSTR *password) {
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passwordIsDefined, BSTR *password) noexcept {
     TRACE_OBJECT_CALL("CryptoGetTextPassword");
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 

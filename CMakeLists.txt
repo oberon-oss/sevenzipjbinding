@@ -252,7 +252,7 @@ ENDIF()
 
 # ------------------- CPack -------------------
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "7-Zip-JBinding - java binding for p7zip, crossplatform version of 7-Zip.")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "7-Zip-JBinding - java binding for 7-Zip")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ZIP)
 SET(CPACK_GENERATOR ZIP)
 SET(CPACK_SOURCE_GENERATOR ZIP)

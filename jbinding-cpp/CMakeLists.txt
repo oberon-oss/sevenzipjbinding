@@ -35,8 +35,7 @@ ELSE(HAVE_WCHAR_H)
   SET(HAVE_UNICODE_WCHAR 0)
 ENDIF(HAVE_WCHAR_H)
 
-SET(P7ZIP_SRC ../p7zip)
-SET(_7ZIP_SRC ../7zip)
+SET(SEVEN_ZIP_SRC ../7zip)
 
 SET(JBINDING_PLATFORM_CPP_FILES)
 IF(MINGW)
@@ -59,15 +58,15 @@ include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
 
 IF(MINGW)
-    include_directories(${_7ZIP_SRC})
-    include_directories(${_7ZIP_SRC}/CPP)
-    include_directories(${_7ZIP_SRC}/C)
+    include_directories(${SEVEN_ZIP_SRC})
+    include_directories(${SEVEN_ZIP_SRC}/CPP)
+    include_directories(${SEVEN_ZIP_SRC}/C)
 ELSE(MINGW)
-    include_directories(${P7ZIP_SRC})
-    include_directories(${P7ZIP_SRC}/CPP)
-    include_directories(${P7ZIP_SRC}/C)
-    include_directories(${P7ZIP_SRC}/CPP/myWindows)
-    include_directories(${P7ZIP_SRC}/CPP/include_windows)
+    include_directories(${SEVEN_ZIP_SRC})
+    include_directories(${SEVEN_ZIP_SRC}/CPP)
+    include_directories(${SEVEN_ZIP_SRC}/C)
+    include_directories(${SEVEN_ZIP_SRC}/CPP/Windows)
+    # include_directories(${SEVEN_ZIP_SRC}/CPP/include_windows)
 ENDIF(MINGW)
 include_directories(${PROJECT_BINARY_DIR}/javah)
 include_directories(.)
@@ -136,17 +135,15 @@ ELSE(MINGW)
 ENDIF(MINGW)
 
 IF(MINGW)
-    SET(SEVEN_ZIP_SRC "${_7ZIP_SRC}")
     SET(SEVEN_ZIP_PLATFORM_SOURCE_FILES
         ${SEVEN_ZIP_SRC}/C/AesOpt.c
         ${SEVEN_ZIP_SRC}/CPP/Windows/FileLink.cpp
         ${SEVEN_ZIP_SRC}/CPP/Common/NewHandler.cpp
     )
 ELSE(MINGW)
-    SET(SEVEN_ZIP_SRC "${P7ZIP_SRC}")
-    SET(SEVEN_ZIP_PLATFORM_SOURCE_FILES
-        ${SEVEN_ZIP_SRC}/CPP/myWindows/wine_date_and_time.cpp
-    )
+    # SET(SEVEN_ZIP_PLATFORM_SOURCE_FILES
+    #     ${SEVEN_ZIP_SRC}/CPP/myWindows/wine_date_and_time.cpp
+    # )
 ENDIF(MINGW)
 
 SET(SEVEN_ZIP_SOURCE_FILES
@@ -154,7 +151,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/Common/CRC.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/IntToString.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/ListFileUtils.cpp
-    #${SEVEN_ZIP_SRC}/CPP/Common/StdInStream.cpp TODO check on Linux, remove it not needed
+    ####${SEVEN_ZIP_SRC}/CPP/Common/StdInStream.cpp TODO check on Linux, remove it not needed
     ${SEVEN_ZIP_SRC}/CPP/Common/MyString.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/MyWindows.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/StringConvert.cpp
@@ -168,6 +165,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/Windows/FileDir.cpp
     ${SEVEN_ZIP_SRC}/CPP/Windows/FileFind.cpp
     ${SEVEN_ZIP_SRC}/CPP/Windows/FileIO.cpp
+    ${SEVEN_ZIP_SRC}/CPP/Windows/FileLink.cpp
     ${SEVEN_ZIP_SRC}/CPP/Windows/FileName.cpp
     ${SEVEN_ZIP_SRC}/CPP/Windows/PropVariant.cpp
     ${SEVEN_ZIP_SRC}/CPP/Windows/PropVariantConv.cpp
@@ -208,6 +206,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/FatHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HandlerCont.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ExtHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HfsHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/NtfsHandler.cpp
@@ -216,7 +215,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
-    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
+    ####${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/DummyOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/FindSignature.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/HandlerOut.cpp
@@ -232,7 +231,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zEncode.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zExtract.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderInStream.cpp
-    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
+    ####${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandlerOut.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHeader.cpp
@@ -252,6 +251,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/LzhHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzmsDecoder.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzfseDecoder.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
@@ -264,11 +264,11 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 
-    # Com ??
+    # # Com ??
 
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ArHandler.cpp
-    
+
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
@@ -299,9 +299,9 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Tar/TarRegister.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Tar/TarUpdate.cpp
 
-    # Udf
+    # # Udf
 
-    # Wim
+    # # Wim
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Zip/ZipAddCommon.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandler.cpp
@@ -355,6 +355,8 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/ShrinkDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/XpressDecoder.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/XzEncoder.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/XzDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
 
 
@@ -392,6 +394,13 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/C/Sha256.c
     ${SEVEN_ZIP_SRC}/C/7zCrc.c
     ${SEVEN_ZIP_SRC}/C/7zCrcOpt.c
+    ${SEVEN_ZIP_SRC}/C/SwapBytes.c
+    ${SEVEN_ZIP_SRC}/C/Lzma2DecMt
+    ${SEVEN_ZIP_SRC}/C/AesOpt.c
+    ${SEVEN_ZIP_SRC}/C/LzFindOpt.c
+    ${SEVEN_ZIP_SRC}/C/Sha1Opt.c
+    ${SEVEN_ZIP_SRC}/C/Sha256Opt.c
+    ${SEVEN_ZIP_SRC}/C/MtDec.c
 
     ${SEVEN_ZIP_SRC}/C/7zStream.c
     ${SEVEN_ZIP_SRC}/C/Delta.c
@@ -400,6 +409,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/C/MtCoder.c
     ${SEVEN_ZIP_SRC}/C/Ppmd7.c
     ${SEVEN_ZIP_SRC}/C/Ppmd7Dec.c
+    ${SEVEN_ZIP_SRC}/C/Ppmd7aDec.c
     ${SEVEN_ZIP_SRC}/C/Ppmd7Enc.c
     ${SEVEN_ZIP_SRC}/C/Ppmd8.c
     ${SEVEN_ZIP_SRC}/C/Ppmd8Dec.c
@@ -426,16 +436,16 @@ SET(JBINDING_CPP_FILES
     JavaToCPP/JavaToCPPSevenZip.cpp
     JavaToCPP/JavaToCPPInArchiveImpl.cpp
     JavaToCPP/JavaToCPPOutArchiveImpl.cpp
+    CPPToJava/CPPToJavaArchiveUpdateCallback.cpp
+    CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
     CPPToJava/CPPToJavaArchiveExtractCallback.cpp
     CPPToJava/CPPToJavaArchiveOpenCallback.cpp
     CPPToJava/CPPToJavaArchiveOpenVolumeCallback.cpp
-    CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
-    CPPToJava/CPPToJavaInStream.cpp
-    CPPToJava/CPPToJavaOutStream.cpp
     CPPToJava/CPPToJavaProgress.cpp
     CPPToJava/CPPToJavaSequentialInStream.cpp
+    CPPToJava/CPPToJavaInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
-    CPPToJava/CPPToJavaArchiveUpdateCallback.cpp
+    CPPToJava/CPPToJavaOutStream.cpp
 
     ../test/CTests/JniToolsTest.cpp
     ../test/CTests/JBindingTest.cpp
@@ -490,7 +500,7 @@ add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
 add_library(7-Zip-JBinding
             SHARED
             ${JBINDING_CPP_FILES}
-            ${JBINDING_PLATFORM_CPP_FILES}
+            # ${JBINDING_PLATFORM_CPP_FILES}
             ${SEVEN_ZIP_SOURCE_FILES}
             ${SEVEN_ZIP_PLATFORM_SOURCE_FILES}
             ${JBINDING_JAVAH_H_FILES})

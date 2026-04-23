@@ -4,7 +4,7 @@
 #include "CPPToJavaSequentialInStream.h"
 
 
-STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *processedSize)
+STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *processedSize) noexcept
 {
     TRACE_OBJECT_CALL("Read");
 

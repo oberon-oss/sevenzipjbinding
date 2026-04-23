@@ -5,11 +5,19 @@
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 
-class CPPToJavaArchiveOpenCallback : public CPPToJavaAbstract, public virtual IArchiveOpenCallback, public CMyUnknownImp
+#include "7zip/IDecl.h"
+#include "Common/MyCom.h"
+#include "7zip/Archive/IArchive.h"
+
+
+class CPPToJavaArchiveOpenCallback:
+    public CPPToJavaAbstract,
+    public IArchiveOpenCallback, // virtual 
+    public CMyUnknownImp
 {
     jni::IArchiveOpenCallback * _iArchiveOpenCallback;
+
 public:
-    MY_UNKNOWN_IMP
 
     CPPToJavaArchiveOpenCallback(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject archiveOpenCallback) :
         CPPToJavaAbstract(jbindingSession, initEnv, archiveOpenCallback),
@@ -18,8 +26,11 @@ public:
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
     }
 
-    STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes);
-    STDMETHOD(SetCompleted)(const UInt64 *files, const UInt64 *bytes);
+    Z7_IFACE_COM7_IMP_NONFINAL(IArchiveOpenCallback)
+
+private:
+    Z7_COM_UNKNOWN_IMP_1(IArchiveOpenCallback)
 };
+
 
 #endif /*CPPTOJAVAARCHIVEOPENCALLBACK_H_*/

@@ -4,7 +4,7 @@
 #include "CPPToJavaSequentialOutStream.h"
 
 STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size,
-                                                 UInt32 *processedSize) {
+                                                 UInt32 *processedSize) noexcept {
     TRACE_OBJECT_CALL("Write");
 
     if (processedSize) {

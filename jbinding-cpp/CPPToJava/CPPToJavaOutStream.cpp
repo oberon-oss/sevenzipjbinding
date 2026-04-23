@@ -4,7 +4,7 @@
 #include "CPPToJavaOutStream.h"
 
 
-STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
+STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) noexcept {
     TRACE_OBJECT_CALL("Seek");
 
     TRACE("SEEK(offset=" << offset << ", origin=" << seekOrigin << ")");
@@ -31,7 +31,7 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaOutStream::SetSize(UInt64 newSize) {
+STDMETHODIMP CPPToJavaOutStream::SetSize(UInt64 newSize) noexcept {
     TRACE_OBJECT_CALL("SetSize");
 
 	TRACE("SetSize(size=" << newSize << ')');
@@ -41,5 +41,16 @@ STDMETHODIMP CPPToJavaOutStream::SetSize(UInt64 newSize) {
 	_iOutStream->setSize(jniEnvInstance, _javaImplementation, (jlong)newSize);
 
 	return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
+}
+
+STDMETHODIMP CPPToJavaOutStream::Write(const void *data, UInt32 size, UInt32 *processedSize) noexcept {
+    TRACE("WRITE(size=" << size << ")")
+    HRESULT result = _sequentialOutStream.Write(data, size, processedSize);
+#ifdef TRACE_ON
+    if (processedSize) {
+        TRACE("WRITE: size=" << size << ", was written:" << *processedSize << ", result:" << result);
+    }
+#endif
+    return result;
 }
 

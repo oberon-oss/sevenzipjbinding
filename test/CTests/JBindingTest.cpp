@@ -4,12 +4,19 @@
  *  Created on: Jan 31, 2010
  *      Author: boris
  */
+#include "SevenZipJBinding.h"
 #include <iostream>
 #include <sstream>
 
 #include <vector>
+#include <chrono>
+#include <thread>
 
-#include "SevenZipJBinding.h"
+#include "7zip/Archive/IArchive.h"
+#include "Common/MyCom.h"
+
+#include "CPPToJava/CPPToJavaAbstract.h"
+#include "JavaStatInfos/JavaPackageSevenZip.h"
 #include "Common/MyCom.h"
 #include "Windows/Thread.h"
 
@@ -27,29 +34,46 @@ JT_END_CLASS
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jbindingtools", ExceptionHandlingTest)
 /*    */JT_CLASS_STATIC_METHOD(String, recursiveCallbackMethod,
-        /*    */JT_STRING(path, JT_INT(depth, JT_INT(width, JT_INT(mtwidth, JT_BOOLEAN(useException,
+/*    */JT_STRING(path, JT_INT(depth, JT_INT(width, JT_INT(mtwidth, JT_BOOLEAN(useException,
                                                 JT_BOOLEAN(customErrorMessage, JT_INT(widthIndex,JT_INT(mtwidthindex,_)))))))))
 JT_END_CLASS
 
-class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
+
+#define Z7_IFACEM_ISimpleTestClass(x) \
+  x(GetIndex())
+Z7_IFACE_CONSTR_STREAM(ISimpleTestClass, 0xFF)
+
+
+
+class SimpleIUnknownClass : public ISimpleTestClass,
+                            public Object,
+                            public CMyUnknownImp {
     int _index;
     int &_instanceCount;
 public:
-    MY_UNKNOWN_IMP
     SimpleIUnknownClass(int &instanceCount, int index) :
         _instanceCount(instanceCount), _index(index) {
         TRACE_OBJECT_CREATION("SimpleIUnknownClass")
         _instanceCount++;
     }
-    int getIndex() {
-        TRACE_OBJECT_CALL("getIndex")
-        return _index;
-    }
-    ~SimpleIUnknownClass() {
+    // int GetIndex() {
+    //     TRACE_OBJECT_CALL("GetIndex")
+    //     return _index;
+    // }
+    virtual ~SimpleIUnknownClass() {
         TRACE_OBJECT_CALL("~SimpleIUnknownClass")
         _instanceCount--;
     }
+    Z7_IFACE_COM7_IMP_NONFINAL(ISimpleTestClass);
+private:
+    Z7_COM_UNKNOWN_IMP_1(ISimpleTestClass)
 };
+
+STDMETHODIMP SimpleIUnknownClass::GetIndex() noexcept{
+    TRACE_OBJECT_CALL("GetIndex")
+    return this->_index;
+}
+
 
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovingObjects(
@@ -75,7 +99,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovin
         return env->NewStringUTF("Object count doesn't match instance count");
     }
     for (int i = 0; i < objectCount; i++) {
-        if (objects[i]->getIndex() != i || objectMyComPtrs[i]->getIndex() != i) {
+        if (objects[i]->GetIndex() != i || objectMyComPtrs[i]->GetIndex() != i) {
             return env->NewStringUTF("Wrong object index");
         }
     }
@@ -87,7 +111,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovin
         return env->NewStringUTF("Object count doesn't match instance count");
     }
     for (int i = 0; i < objectCount; i++) {
-        if (objects[i]->getIndex() != i || objectMyComPtrs[i]->getIndex() != i) {
+        if (objects[i]->GetIndex() != i || objectMyComPtrs[i]->GetIndex() != i) {
             return env->NewStringUTF("Wrong object index");
         }
     }
@@ -240,7 +264,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
             }
         }
         for (int i = 0; i < mtwidth;) {
-            threads[i].Wait();
+            threads[i].Wait_Close();
             i++;
         }
         for (int i = 0; i < mtwidth; i++) {
