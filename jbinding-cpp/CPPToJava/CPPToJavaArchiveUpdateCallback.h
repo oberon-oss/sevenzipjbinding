@@ -4,6 +4,7 @@
 #include "CPPToJavaAbstract.h"
 #include "CPPToJavaProgress.h"
 #include "CodecTools.h"
+#include "Common/MyCom.h"
 
 #include "7zip/IPassword.h"
 

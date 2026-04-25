@@ -3,6 +3,7 @@
 
 #include "CPPToJavaCryptoGetTextPassword.h"
 #include "CPPToJavaProgress.h"
+#include "Common/MyCom.h"
 
 class CPPToJavaArchiveExtractCallback : public virtual IArchiveExtractCallback,
                                         public virtual ICryptoGetTextPassword,
@@ -48,29 +49,7 @@ public:
     }
   }
 
-  // STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) throw() {
-  //     TRACE_OBJECT_CALL("QueryInterface");
-  //
-  //     if (refguid == IID_ICryptoGetTextPassword &&
-  //     _cryptoGetTextPasswordImpl) {
-  //         *p = (void *) (ICryptoGetTextPassword *)
-  //         _cryptoGetTextPasswordImpl; _cryptoGetTextPasswordImpl->AddRef();
-  //         return S_OK;
-  //     }
-  //
-  //     return CPPToJavaProgress::QueryInterface(refguid, p);
-  // }
-
-  // STDMETHOD_(ULONG, AddRef)() throw() {
-  //     TRACE_OBJECT_CALL("AddRef");
-  //     return CPPToJavaProgress::AddRef();
-  // }
-  //
-  // STDMETHOD_(ULONG, Release)() {
-  //     TRACE_OBJECT_CALL("Release");
-  //     return CPPToJavaProgress::Release();
-  // }
-  //
+public:
   STDMETHOD(SetTotal)(UInt64 total) noexcept Z7_override {
     TRACE_OBJECT_CALL("SetTotal");
     return _progress.SetTotal(total);

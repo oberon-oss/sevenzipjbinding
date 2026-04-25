@@ -87,9 +87,13 @@ public:
         {
             return _archiveOpenVolumeCallback->GetProperty(propID, value);
         }
-        // TODO Generate exception explaining situation:
-        // IArchiveOpenCallback implementation must also implement IArchiveOpenVolumeCallback
-        return E_NOINTERFACE;
+        // No IArchiveOpenVolumeCallback implemented - return null variant
+        // This allows 7-zip to continue during codec auto-detection
+        if (value)
+        {
+            value->vt = VT_NULL;
+        }
+        return S_OK;
     }
     STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream) noexcept Z7_override
     {
@@ -100,9 +104,13 @@ public:
         {
             return _archiveOpenVolumeCallback->GetStream(name, inStream);
         }
-        // TODO Generate exception explaining situation:
-        // IArchiveOpenCallback implementation must also implement IArchiveOpenVolumeCallback
-        return E_NOINTERFACE;
+        // No IArchiveOpenVolumeCallback implemented - return NULL stream
+        // This allows 7-zip to continue during codec auto-detection
+        if (inStream)
+        {
+            *inStream = NULL;
+        }
+        return S_OK;
     }
 
     STDMETHOD(CryptoGetTextPassword)(BSTR *password) noexcept Z7_override
@@ -118,7 +126,6 @@ public:
     }
 
 private:
-    Z7_COM_UNKNOWN_IMP_1(IArchiveOpenCallback)
-    // Z7_COM_UNKNOWN_IMP_3(IArchiveOpenCallback, IArchiveOpenVolumeCallback, ICryptoGetTextPassword)
+    Z7_COM_UNKNOWN_IMP_3(IArchiveOpenCallback, IArchiveOpenVolumeCallback, ICryptoGetTextPassword)
 };
 #endif /*UNIVERSALARCHIVEOPENCALLBACK_*/

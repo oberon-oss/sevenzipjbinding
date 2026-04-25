@@ -218,13 +218,16 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 				codecTools.codecs.CreateInArchive(i, archive);
 				if (!archive) {
+					TRACE("  codecs.CreateInArchive returned NULL")
 					continue;
 				}
+				TRACE("  codecs.CreateInArchive succeeded, trying Open()...")
 
 				universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(i));
 
 				UInt64 pos2 = pos;
 				HRESULT result = archive->Open(stream, &pos2, archiveOpenCallback);
+				TRACE("  Open() returned 0x" << std::hex << result << std::dec)
 				if (result != S_OK) {
 					continue;
 				}

@@ -437,6 +437,16 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passw
     TRACE_OBJECT_CALL("CryptoGetTextPassword");
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
+    if (!_isICryptoGetTextPasswordImplemented) {
+        if (passwordIsDefined) {
+            *passwordIsDefined = false;
+        }
+        if (password) {
+            *password = NULL;
+        }
+        return S_OK;
+    }
+
 	if (!_cryptoGetTextPassword) {
 		_cryptoGetTextPassword = jni::ICryptoGetTextPassword::_getInstanceFromObject(jniEnvInstance, _javaImplementation);
 	}

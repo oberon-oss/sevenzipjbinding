@@ -1,6 +1,7 @@
 #ifndef CPPTOJAVACRYPTOGETTEXTPASSWORD_H_
 #define CPPTOJAVACRYPTOGETTEXTPASSWORD_H_
 
+#include "Common/MyCom.h"
 #include "CPPToJavaAbstract.h"
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 

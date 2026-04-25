@@ -22,7 +22,7 @@ void CodecTools::init() {
 
 #ifdef TRACE_ON
 	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
-        const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
+        const wchar_t * name = CodecTools::codecs.Formats[i].Name.Ptr();
 		TRACE("Available codec: '" << name << "'")
 	}
 #endif // TRACE_ON
@@ -30,7 +30,7 @@ void CodecTools::init() {
 	gzipIndex = -1;
 	bzip2Index = -1;
 	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
-        const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
+        const wchar_t * name = CodecTools::codecs.Formats[i].Name.Ptr();
         if (wcscmp(name, L"Cab") == 0) {
             cabIndex = i;
         } else if (wcscmp(name, L"gzip") == 0) {

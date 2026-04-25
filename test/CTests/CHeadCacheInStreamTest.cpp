@@ -31,8 +31,7 @@ public:
 		return _readCount;
 	}
 
-    MY_UNKNOWN_IMP2(ISequentialInStream, IInStream)
-    STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize) {
+    virtual HRESULT STDMETHODCALLTYPE Read(void *data, UInt32 size, UInt32 *processedSize) noexcept override {
     	if (processedSize) {
     		*processedSize = 0;
     	}
@@ -61,7 +60,7 @@ public:
     	}
     	return S_OK;
     }
-    STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
+    virtual HRESULT STDMETHODCALLTYPE Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) noexcept override {
     	switch (seekOrigin) {
     	case SEEK_SET:
     		_pos = offset;
@@ -77,6 +76,19 @@ public:
     	}
     	return S_OK;
     }
+    STDMETHOD_(ULONG, AddRef)() noexcept override { return ++_m_RefCount; }
+    STDMETHOD_(ULONG, Release)() noexcept override { if (--_m_RefCount != 0) return _m_RefCount; delete this; return 0; }
+    private:
+    STDMETHOD(QueryInterface)(REFGUID iid, void **out) noexcept override {
+        *out = NULL;
+        if (iid == IID_IUnknown) { *out = static_cast<IUnknown *>(this); }
+        else if (iid == IID_ISequentialInStream) { *out = static_cast<ISequentialInStream *>(this); }
+        else if (iid == IID_IInStream) { *out = static_cast<IInStream *>(this); }
+        else return E_NOINTERFACE;
+        ++_m_RefCount;
+        return S_OK;
+    }
+    public:
 };
 
 

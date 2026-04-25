@@ -9,16 +9,19 @@ import java.io.RandomAccessFile;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveOpenCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 
 public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase<VoidContext> {
     private class MyArchiveOpenCallback implements IArchiveOpenCallback, IArchiveOpenVolumeCallback {
@@ -68,15 +71,32 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
     }
 
     private void extractMultivolumneCabArchive(ArchiveFormat archiveType, IArchiveOpenCallback archiveOpenCallback,
-            boolean expectToOpen) throws Throwable {
+            boolean expectToOpenAndExtract) throws Throwable {
         IInArchive inArchive = null;
         Throwable throwable = null;
+        boolean couldBeOpenedAndExtracted = false;
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + DISK1_FILE, "r");
             assertNotNull(randomAccessFile);
             try {
                 inArchive = SevenZip.openInArchive(archiveType, new RandomAccessFileInStream(randomAccessFile),
                         archiveOpenCallback);
+
+                for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+                    if (!item.isFolder()) {
+                        ExtractOperationResult result;
+                        result = item.extractSlow(new ISequentialOutStream() {
+                            public int write(byte[] data) throws SevenZipException {
+                                return data.length; // Return amount of consumed data
+                            }
+                        });
+                        if (result != ExtractOperationResult.OK) {
+                            throw new RuntimeException("Error extracting item: " + result);
+                        }
+                    }
+                }
+
+                couldBeOpenedAndExtracted = true;
             } catch (Exception exception) {
             }
         } catch (Throwable t) {
@@ -97,12 +117,12 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
         if (throwable != null) {
             throw throwable;
         }
-        if (expectToOpen) {
-            if (inArchive == null) {
+        if (expectToOpenAndExtract) {
+            if (!couldBeOpenedAndExtracted) {
                 fail("Can't open multivolume CAB file even providing proper implementation of the IArchiveOpenVolumeCallback interface");
             }
         } else {
-            if (inArchive != null) {
+            if (couldBeOpenedAndExtracted) {
                 fail("Exception expected due to the missing IArchiveOpenCallback instance with implemented IArchiveOpenVolumeCallback");
             }
         }

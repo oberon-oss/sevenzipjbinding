@@ -15,6 +15,11 @@
 #include "7zip/Archive/IArchive.h"
 #include "Common/MyCom.h"
 
+// Define GUID for custom test interface
+#define INITGUID
+#include "Common/MyGuidDef.h"
+DEFINE_GUID(IID_ISimpleTestClass, 0x000000FF, 0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+
 #include "CPPToJava/CPPToJavaAbstract.h"
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 #include "Common/MyCom.h"
@@ -65,8 +70,14 @@ public:
         _instanceCount--;
     }
     Z7_IFACE_COM7_IMP_NONFINAL(ISimpleTestClass);
+    // AddRef/Release need to be public for CMyComPtr to work
+    STDMETHOD_(ULONG, AddRef)() throw() Z7_override Z7_final { return ++_m_RefCount; }
+    STDMETHOD_(ULONG, Release)() throw() Z7_override Z7_final { if (--_m_RefCount != 0) return _m_RefCount; delete this; return 0; }
 private:
-    Z7_COM_UNKNOWN_IMP_1(ISimpleTestClass)
+    Z7_COM_QI_BEGIN
+    Z7_COM_QI_ENTRY_UNKNOWN(ISimpleTestClass)
+    Z7_COM_QI_ENTRY(ISimpleTestClass)
+    Z7_COM_QI_END
 };
 
 STDMETHODIMP SimpleIUnknownClass::GetIndex() noexcept{
