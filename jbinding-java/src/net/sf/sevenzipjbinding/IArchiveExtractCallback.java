@@ -65,4 +65,29 @@ public interface IArchiveExtractCallback extends IProgress {
      */
     public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException;
 
+    /**
+     * Report extraction result - called by newer 7-zip engine versions to report extracting errors during the process.
+     * 
+     * This callback is part of the IArchiveExtractCallbackMessage2 interface introduced in 7-zip v23+.
+     * It allows the native 7-zip engine to report extraction errors immediately when they occur,
+     * rather than waiting until {@link #setOperationResult(ExtractOperationResult)} is called.
+     * 
+     * @param indexType
+     *            type of index being reported ({@link ReportExtractResultIndexType})
+     * @param index
+     *            the archive item index or block index, depending on indexType
+     * @param extractOperationResult
+     *            the extraction operation result (e.g., OK, DATAERROR, CRCERROR)
+     * 
+     * @throws SevenZipException
+     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+     *             as failed.
+     * 
+     * @since 7-zip engine v23+
+     */
+    public default void reportExtractResult(ReportExtractResultIndexType indexType, int index, ExtractOperationResult extractOperationResult) throws SevenZipException {
+        // Default no-op implementation for backward compatibility
+        // Existing implementations won't break if they don't override this method
+    }
+
 }

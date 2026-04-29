@@ -27,6 +27,7 @@ import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.PropertyInfo;
+import net.sf.sevenzipjbinding.ReportExtractResultIndexType;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -476,6 +477,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
 
         private final ISequentialOutStream outputStream;
         private ExtractOperationResult extractOperationResult;
+        // Track reportExtractResult calls for verification
+        private ReportExtractResultIndexType lastReportedIndexType;
+        private int lastReportedIndex = -1;
+        private ExtractOperationResult lastReportedOperationResult;
 
         public PasswordArchiveExtractCallback(ISequentialOutStream outputStream) {
             this.outputStream = outputStream;
@@ -508,6 +513,17 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
          * {@inheritDoc}
          */
 
+        public void reportExtractResult(ReportExtractResultIndexType indexType, int index, ExtractOperationResult extractOperationResult) {
+            // Track the reported values for verification in tests
+            this.lastReportedIndexType = indexType;
+            this.lastReportedIndex = index;
+            this.lastReportedOperationResult = extractOperationResult;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+
         public void setCompleted(long completeValue) {
         }
 
@@ -528,6 +544,18 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
 
         public ExtractOperationResult getExtractOperationResult() {
             return extractOperationResult;
+        }
+
+        public ReportExtractResultIndexType getLastReportedIndexType() {
+            return lastReportedIndexType;
+        }
+
+        public int getLastReportedIndex() {
+            return lastReportedIndex;
+        }
+
+        public ExtractOperationResult getLastReportedOperationResult() {
+            return lastReportedOperationResult;
         }
     }
 

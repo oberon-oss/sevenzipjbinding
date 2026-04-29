@@ -219,6 +219,11 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
                 PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(outputStream);
                 inArchive.extract(new int[] { index }, false, extractCallback);
                 operationResult = extractCallback.getExtractOperationResult();
+                // Verify reportExtractResult was called with expected values
+                assertNotNull("reportExtractResult should have been called", extractCallback.getLastReportedIndexType());
+                assertEquals("reportExtractResult index mismatch", index, extractCallback.getLastReportedIndex());
+                assertNotNull("reportExtractResult operation result should not be null", 
+                    extractCallback.getLastReportedOperationResult());
             } else {
                 operationResult = inArchive.extractSlow(index, outputStream, context().passwordToUse);
             }
