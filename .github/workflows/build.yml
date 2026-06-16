@@ -127,6 +127,7 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DSTATIC_BUILD=OFF \
             -DCMAKE_CXX_FLAGS="-std=gnu++98" \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/darwin" \
