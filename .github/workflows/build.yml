@@ -27,7 +27,7 @@ jobs:
             artifact-suffix: "Linux-x86_64"
             platform: "linux"
 
-          - os: "macos-13"
+          - os: "macos-15-intel"
             artifact-suffix: "macOS-x86_64"
             platform: "macos"
             java-arch: "x86_64"
