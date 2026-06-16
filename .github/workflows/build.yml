@@ -18,11 +18,29 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
+    fail-fast: false
+    matrix:
+      include:
+        include:
+          - os: "ubuntu-latest"
+            artifact-suffix: "Linux-x86_64"
+            platform: "linux"
+
+          - os: "macos-13"
+            artifact-suffix: "macOS-x86_64"
+            platform: "macos"
+            java-arch: "x86_64"
+            osx-arch: "x86_64"
+
+          - os: "macos-14"
+            artifact-suffix: "macOS-arm64"
+            platform: "macos"
+            java-arch: "arm64"
+            osx-arch: "arm64"
+
+          - os: "windows-latest"
+            artifact-suffix: "Windows-x86_64"
+            platform: "windows"
 
     steps:
       - name: Checkout
@@ -44,7 +62,8 @@ jobs:
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_TESTING=ON
+            -DBUILD_TESTING=ON \
+            ${{ matrix.cmake-extra-args }}
 
       - name: Build
         run: |
