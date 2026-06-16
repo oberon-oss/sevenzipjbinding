@@ -84,7 +84,9 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
+            
 
+      # CMake Configuration starts.
       - name: Configure CMake - Linux
         if: matrix.platform == 'linux'
         shell: bash
@@ -96,7 +98,6 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_JDK="$JAVA_HOME" \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/linux" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -104,7 +105,7 @@ jobs:
             -DJAVA_DOC="$JAVA_HOME/bin/javadoc" \
             -DJAVA_ARCHIVE="$JAVA_HOME/bin/jar" \
             -DJAVA_USE_JAVAH=FALSE \
-            -DJAVA_HEADER_COMPILE=
+            -DJAVA_HEADER_COMPILE="javac-h-disabled"
 
       - name: Configure CMake - macOS
         if: matrix.platform == 'macos'
@@ -117,7 +118,6 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_JDK="$JAVA_HOME" \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/darwin" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -125,7 +125,7 @@ jobs:
             -DJAVA_DOC="$JAVA_HOME/bin/javadoc" \
             -DJAVA_ARCHIVE="$JAVA_HOME/bin/jar" \
             -DJAVA_USE_JAVAH=FALSE \
-            -DJAVA_HEADER_COMPILE= \
+            -DJAVA_HEADER_COMPILE="javac-h-disabled" \
             -DJAVA_ARCH=${{ matrix.java-arch }} \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.osx-arch }}
 
@@ -144,7 +144,6 @@ jobs:
             -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_JDK="$JDK_HOME" \
             -DJAVA_INCLUDE_PATH="$JDK_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JDK_HOME/include/win32" \
             -DJAVA_COMPILE="$JDK_HOME/bin/javac.exe" \
@@ -152,8 +151,10 @@ jobs:
             -DJAVA_DOC="$JDK_HOME/bin/javadoc.exe" \
             -DJAVA_ARCHIVE="$JDK_HOME/bin/jar.exe" \
             -DJAVA_USE_JAVAH=FALSE \
-            -DJAVA_HEADER_COMPILE= \
+            -DJAVA_HEADER_COMPILE="javac-h-disabled" \
             -DMINGW64=Yes
+      # CMake Configuration ends.
+
 
       - name: Build - Linux/macOS
         if: matrix.platform != 'windows'
