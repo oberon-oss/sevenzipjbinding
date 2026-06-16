@@ -6,7 +6,8 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - "main"
+      - "master"
     tags:
       - "Release-*"
 
@@ -14,33 +15,33 @@ permissions:
   contents: write
 
 jobs:
-  build-test:
-    name: Build and test ${{ matrix.os }}
+  build_test:
+    name: Build and test ${{ matrix.artifact-suffix }}
     runs-on: ${{ matrix.os }}
 
     strategy:
-    fail-fast: false
-    matrix:
-      include:
-        - os: "ubuntu-latest"
-          artifact-suffix: "Linux-x86_64"
-          platform: "linux"
+      fail-fast: false
+      matrix:
+        include:
+          - os: "ubuntu-latest"
+            artifact-suffix: "Linux-x86_64"
+            platform: "linux"
 
-        - os: "macos-13"
-          artifact-suffix: "macOS-x86_64"
-          platform: "macos"
-          java-arch: "x86_64"
-          osx-arch: "x86_64"
+          - os: "macos-13"
+            artifact-suffix: "macOS-x86_64"
+            platform: "macos"
+            java-arch: "x86_64"
+            osx-arch: "x86_64"
 
-        - os: "macos-14"
-          artifact-suffix: "macOS-arm64"
-          platform: "macos"
-          java-arch: "arm64"
-          osx-arch: "arm64"
+          - os: "macos-14"
+            artifact-suffix: "macOS-arm64"
+            platform: "macos"
+            java-arch: "arm64"
+            osx-arch: "arm64"
 
-        - os: "windows-latest"
-          artifact-suffix: "Windows-x86_64"
-          platform: "windows"
+          - os: "windows-latest"
+            artifact-suffix: "Windows-x86_64"
+            platform: "windows"
 
     steps:
       - name: Checkout
@@ -49,32 +50,87 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: "temurin"
           java-version: "17"
 
       - name: Install Linux build dependencies
-        if: runner.os == 'Linux'
+        if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake make gcc g++
 
-      - name: Configure CMake
+      - name: Set up MSYS2 / MinGW64
+        if: matrix.platform == 'windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: "MINGW64"
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+
+      - name: Configure CMake - Linux
+        if: matrix.platform == 'linux'
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=ON
+
+      - name: Configure CMake - macOS
+        if: matrix.platform == 'macos'
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            ${{ matrix.cmake-extra-args }}
+            -DJAVA_ARCH=${{ matrix.java-arch }} \
+            -DCMAKE_OSX_ARCHITECTURES=${{ matrix.osx-arch }}
 
-      - name: Build
+      - name: Configure CMake - Windows
+        if: matrix.platform == 'windows'
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build \
+            -G "MinGW Makefiles" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=ON \
+            -DMINGW64=Yes
+
+      - name: Build - Linux/macOS
+        if: matrix.platform != 'windows'
         run: |
           cmake --build build --config Release --parallel
 
-      - name: Run tests
+      - name: Build - Windows
+        if: matrix.platform == 'windows'
+        shell: msys2 {0}
+        run: |
+          cmake --build build --config Release --parallel
+
+      - name: Run tests - Linux/macOS
+        if: matrix.platform != 'windows'
         run: |
           ctest --test-dir build --output-on-failure
 
-      - name: Collect non-test JARs
+      - name: Run tests - Windows
+        if: matrix.platform == 'windows'
+        shell: msys2 {0}
+        run: |
+          ctest --test-dir build --output-on-failure
+
+      - name: Collect non-test JARs - Linux/macOS
+        if: matrix.platform != 'windows'
         shell: bash
+        run: |
+          mkdir -p dist
+          find build -type f -name "*.jar" \
+            ! -iname "*test*.jar" \
+            ! -iname "*tests*.jar" \
+            -exec cp {} dist/ \;
+
+      - name: Collect non-test JARs - Windows
+        if: matrix.platform == 'windows'
+        shell: msys2 {0}
         run: |
           mkdir -p dist
           find build -type f -name "*.jar" \
@@ -85,16 +141,15 @@ jobs:
       - name: Upload non-test JAR artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sevenzipjbinding-jars-${{ runner.os }}
+          name: sevenzipjbinding-jars-${{ matrix.artifact-suffix }}
           path: dist/*.jar
           if-no-files-found: error
 
   release:
     name: Publish GitHub Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs:
-      - build-test
-    runs-on: ubuntu-latest
+    needs: ["build_test"]
+    runs-on: "ubuntu-latest"
 
     steps:
       - name: Download built JARs
