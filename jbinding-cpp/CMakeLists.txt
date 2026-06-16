@@ -201,6 +201,8 @@ SET(SEVEN_ZIP_SOURCE_FILES
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/LoadCodecs.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveOpenCallback.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
