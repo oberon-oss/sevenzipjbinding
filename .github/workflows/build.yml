@@ -44,6 +44,12 @@ jobs:
             platform: "windows"
 
     steps:
+      - name: Disable Git line-ending conversion
+        shell: bash
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       - name: Checkout
         uses: actions/checkout@v4
 

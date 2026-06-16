@@ -1,0 +1,2 @@
+# Keep test data byte-exact across platforms
+test/JavaTests/testdata/** -text
