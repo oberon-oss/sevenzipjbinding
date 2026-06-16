@@ -165,7 +165,7 @@ jobs:
         if: matrix.platform == 'windows'
         shell: msys2 {0}
         run: |
-          cmake --build build --config Release --parallel
+          cmake --build build --config Release --parallel 1
 
       - name: Run tests - Linux/macOS
         if: matrix.platform != 'windows'
