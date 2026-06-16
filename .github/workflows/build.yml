@@ -53,6 +53,20 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Show Java tools
+        shell: bash
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          which javac
+          java -version
+          javac -version
+          if command -v javah >/dev/null 2>&1; then
+            echo "javah found at: $(command -v javah)"
+          else
+            echo "javah not found, expected for modern JDKs"
+          fi
+
       - name: Install Linux build dependencies
         if: matrix.platform == 'linux'
         run: |
@@ -75,7 +89,11 @@ jobs:
         run: |
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_TESTING=ON
+            -DBUILD_TESTING=ON \
+            -DJAVA_HOME="$JAVA_HOME" \
+            -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_USE_JAVAH=FALSE \
+            -DJAVA_HEADER_COMPILE=
 
       - name: Configure CMake - macOS
         if: matrix.platform == 'macos'
@@ -83,6 +101,10 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DJAVA_HOME="$JAVA_HOME" \
+            -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_USE_JAVAH=FALSE \
+            -DJAVA_HEADER_COMPILE= \
             -DJAVA_ARCH=${{ matrix.java-arch }} \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.osx-arch }}
 
@@ -94,6 +116,10 @@ jobs:
             -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DJAVA_HOME="$JAVA_HOME" \
+            -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_USE_JAVAH=FALSE \
+            -DJAVA_HEADER_COMPILE= \
             -DMINGW64=Yes
 
       - name: Build - Linux/macOS
@@ -148,7 +174,7 @@ jobs:
   release:
     name: Publish GitHub Release
     if: startsWith(github.ref, 'refs/tags/')
-    needs: ["build_test"]
+    needs: [ "build_test" ]
     runs-on: "ubuntu-latest"
 
     steps:
