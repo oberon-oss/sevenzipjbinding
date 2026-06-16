@@ -14,99 +14,99 @@
 #  - JAVA_ARCH           (System.getProperty("os.arch"))
 
 SET(JAVA_JDK CACHE PATH "Path to JDK 1.5 or higher")
-IF(NOT JAVA_JDK_OLD)
+IF (NOT JAVA_JDK_OLD)
     SET(JAVA_JDK_OLD CACHE INTERNAL "Internal: Old copy of JAVA_JDK")
-ENDIF()
-IF(JAVA_HOME)
+ENDIF ()
+IF (JAVA_HOME)
     SET(JAVA_JDK "${JAVA_HOME}")
-ENDIF()
+ENDIF ()
 SET(HELP
-"Please set JAVA_HOME to jdk1.5 or higher or use -DJAVA_JDK=<path-to-jdk> switch for cmake.
+        "Please set JAVA_HOME to jdk1.5 or higher or use -DJAVA_JDK=<path-to-jdk> switch for cmake.
 Don't forget to delete 'CMakeCache.txt' file, if you want '-D' parameter to take effect."
 )
 
-IF(NOT "${JAVA_JDK}" STREQUAL "${JAVA_JDK_OLD}")
-    IF(NOT JAVA_JDK_OLD STREQUAL "")
+IF (NOT "${JAVA_JDK}" STREQUAL "${JAVA_JDK_OLD}")
+    IF (NOT JAVA_JDK_OLD STREQUAL "")
         MESSAGE("Java JDK path (JAVA_JDK) was changed. Redo search...")
-    ENDIF()
-    SET(JAVA_COMPILE                 JAVA_COMPILE-NOTFOUND)
-    SET(JAVA_RUNTIME                 JAVA_RUNTIME-NOTFOUND)
-    SET(JAVA_HEADER_COMPILE          JAVA_HEADER_COMPILE-NOTFOUND)
-    SET(JAVA_DOC                     JAVA_DOC-NOTFOUND)
-    SET(JAVA_ARCHIVE                 JAVA_ARCHIVE-NOTFOUND)
-    SET(JAVA_INCLUDE_PATH            JAVA_INCLUDE_PATH-NOTFOUND)
-    
-    SET(JAVA_JDK_OLD "${JAVA_JDK}" CACHE INTERNAL "Internal: Old copy of JAVA_JDK" FORCE)
-ENDIF()
+    ENDIF ()
+    SET(JAVA_COMPILE JAVA_COMPILE-NOTFOUND)
+    SET(JAVA_RUNTIME JAVA_RUNTIME-NOTFOUND)
+    SET(JAVA_HEADER_COMPILE JAVA_HEADER_COMPILE-NOTFOUND)
+    SET(JAVA_DOC JAVA_DOC-NOTFOUND)
+    SET(JAVA_ARCHIVE JAVA_ARCHIVE-NOTFOUND)
+    SET(JAVA_INCLUDE_PATH JAVA_INCLUDE_PATH-NOTFOUND)
 
-IF(NOT JAVA_INCLUDE_PATH)
+    SET(JAVA_JDK_OLD "${JAVA_JDK}" CACHE INTERNAL "Internal: Old copy of JAVA_JDK" FORCE)
+ENDIF ()
+
+IF (NOT JAVA_INCLUDE_PATH)
     MESSAGE("-- Looking for java JNI jni.h include path")
     FIND_FILE(JAVA_JNI_H
-                jni.h
+            jni.h
             PATHS
-                "${JAVA_JDK}/include"
-                "$ENV{JAVA_HOME}/include"
+            "${JAVA_JDK}/include"
+            "$ENV{JAVA_HOME}/include"
             NO_CMAKE_FIND_ROOT_PATH
     )
-    
-    IF(NOT JAVA_JNI_H)
+
+    IF (NOT JAVA_JNI_H)
         INCLUDE(FindJNI)
-        
+
         SET(JNI_INCLUDE_DIRS CACHE INTERNAL "Ignored" FORCE)
         SET(JNI_LIBRARIES CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_AWT_LIBRARY CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_JVM_LIBRARY CACHE INTERNAL "Ignored" FORCE)
-#        SET(JAVA_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
-#        SET(JAVA_INCLUDE_PATH2 CACHE INTERNAL "Ignored" FORCE)
+        #        SET(JAVA_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
+        #        SET(JAVA_INCLUDE_PATH2 CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_AWT_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
-    ELSE()
+    ELSE ()
         GET_FILENAME_COMPONENT(JAVA_INCLUDE_PATH_VAR "${JAVA_JNI_H}" PATH)
         SET(JAVA_INCLUDE_PATH "${JAVA_INCLUDE_PATH_VAR}" CACHE PATH "Include path for jni.h")
         MARK_AS_ADVANCED(JAVA_INCLUDE_PATH)
-    ENDIF()
+    ENDIF ()
     SET(JAVA_JNI_H CACHE INTERNAL "Ignored" FORCE)
-    
-    IF(JAVA_INCLUDE_PATH)
+
+    IF (JAVA_INCLUDE_PATH)
         MESSAGE("-- Looking for java JNI jni.h include path - found: ${JAVA_INCLUDE_PATH}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java JNI jni.h include file not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
 
 
-IF(NOT JAVA_INCLUDE_PATH2)
+IF (NOT JAVA_INCLUDE_PATH2)
     MESSAGE("-- Looking for java JNI jni_md.h include path")
     FIND_FILE(JAVA_JNI_MD_H
-                jni_md.h
+            jni_md.h
             PATHS
-                "${JAVA_INCLUDE_PATH}/win32"
-                "${JAVA_INCLUDE_PATH}/linux"
-                "${JAVA_INCLUDE_PATH}/freebsd"
-                "${JAVA_INCLUDE_PATH}/netbsd"
-                "${JAVA_INCLUDE_PATH}/darwin"
+            "${JAVA_INCLUDE_PATH}/win32"
+            "${JAVA_INCLUDE_PATH}/linux"
+            "${JAVA_INCLUDE_PATH}/freebsd"
+            "${JAVA_INCLUDE_PATH}/netbsd"
+            "${JAVA_INCLUDE_PATH}/darwin"
             NO_CMAKE_FIND_ROOT_PATH
     )
 
-    IF(JAVA_JNI_MD_H)
+    IF (JAVA_JNI_MD_H)
         GET_FILENAME_COMPONENT(JAVA_INCLUDE_PATH2_VAR "${JAVA_JNI_MD_H}" PATH)
         SET(JAVA_INCLUDE_PATH2 "${JAVA_INCLUDE_PATH2_VAR}" CACHE PATH "Include path for jni_md.h")
         MARK_AS_ADVANCED(JAVA_INCLUDE_PATH2)
         SET(JAVA_JNI_MD_H CACHE INTERNAL "Ignored" FORCE)
         MESSAGE("-- Looking for java JNI jni_md.h include path - found: ${JAVA_INCLUDE_PATH2}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java JNI jni_md.h include file not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
 
 
 GET_FILENAME_COMPONENT(JAVA_JNI_JDK_PATH "${JAVA_INCLUDE_PATH}/.." ABSOLUTE)
 
 
-IF(NOT JAVA_COMPILE)
+IF (NOT JAVA_COMPILE)
     MESSAGE("-- Looking for java compiler 'javac'")
     FIND_PROGRAM(JAVA_COMPILE
             javac
-        PATHS 
+            PATHS
             "${JAVA_JDK}/bin"
             "$ENV{JAVA_HOME}/bin"
             "${JAVA_JNI_JDK_PATH}/bin"
@@ -117,32 +117,72 @@ IF(NOT JAVA_COMPILE)
             /usr/share/java/bin
             /usr/local/bin
             /usr/local/java/bin
-        DOC "'javac': java compiler"
-        NO_DEFAULT_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
+            DOC "'javac': java compiler"
+            NO_DEFAULT_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_CMAKE_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
+            NO_CMAKE_FIND_ROOT_PATH
     )
     FIND_PROGRAM(JAVA_COMPILE
             javac
     )
     MARK_AS_ADVANCED(JAVA_COMPILE)
-    
-    IF(JAVA_COMPILE)
+
+    IF (JAVA_COMPILE)
         MESSAGE("-- Looking for java compiler 'javac' - found: ${JAVA_COMPILE}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java compiler 'javac' not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
+
+IF (NOT JAVAC_COMPAT_ARGS)
+    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} -version
+            RESULT_VARIABLE javac_version_result
+            OUTPUT_VARIABLE javac_version_output
+            ERROR_VARIABLE javac_version_error
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_STRIP_TRAILING_WHITESPACE)
+
+    SET(JAVAC_VERSION_TEXT "${javac_version_output} ${javac_version_error}")
+
+    IF (NOT javac_version_result EQUAL 0)
+        MESSAGE(FATAL_ERROR "Unable to determine javac version: ${JAVAC_VERSION_TEXT}")
+    ENDIF ()
+
+    STRING(REGEX MATCH "javac[ ]+([0-9]+)(\\.([0-9]+))?" JAVAC_VERSION_MATCH "${JAVAC_VERSION_TEXT}")
+
+    IF (NOT JAVAC_VERSION_MATCH)
+        MESSAGE(FATAL_ERROR "Unable to parse javac version from: ${JAVAC_VERSION_TEXT}")
+    ENDIF ()
+
+    SET(JAVAC_VERSION_MAJOR "${CMAKE_MATCH_1}")
+    SET(JAVAC_VERSION_MINOR "${CMAKE_MATCH_3}")
+
+    IF ("${JAVAC_VERSION_MAJOR}" STREQUAL "1")
+        IF ("${JAVAC_VERSION_MINOR}" STREQUAL "5")
+            SET(JAVAC_COMPAT_ARGS "-source;1.5;-target;1.5" CACHE STRING "Java compatibility arguments")
+        ELSEIF ("${JAVAC_VERSION_MINOR}" STREQUAL "6")
+            SET(JAVAC_COMPAT_ARGS "-source;1.6;-target;1.6" CACHE STRING "Java compatibility arguments")
+        ELSEIF ("${JAVAC_VERSION_MINOR}" STREQUAL "7")
+            SET(JAVAC_COMPAT_ARGS "-source;1.7;-target;1.7" CACHE STRING "Java compatibility arguments")
+        ELSE ()
+            SET(JAVAC_COMPAT_ARGS "-source;1.8;-target;1.8" CACHE STRING "Java compatibility arguments")
+        ENDIF ()
+    ELSE ()
+        SET(JAVAC_COMPAT_ARGS "--release;8" CACHE STRING "Java compatibility arguments")
+    ENDIF ()
+
+    MESSAGE("-- Java compatibility arguments: ${JAVAC_COMPAT_ARGS}")
+ENDIF ()
 
 
-IF(NOT JAVA_HEADER_COMPILE)
+IF (NOT JAVA_HEADER_COMPILE)
     MESSAGE("-- Looking for java header compiler 'javah'")
     FIND_PROGRAM(JAVA_HEADER_COMPILE
-      javah
-      PATHS 
+            javah
+            PATHS
             "${JAVA_JDK}/bin"
             "$ENV{JAVA_HOME}/bin"
             "${JAVA_JNI_JDK_PATH}/bin"
@@ -153,32 +193,36 @@ IF(NOT JAVA_HEADER_COMPILE)
             /usr/share/java/bin
             /usr/local/bin
             /usr/local/java/bin
-        DOC "'javah' tool to use"
-        NO_DEFAULT_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
+            DOC "'javah' tool to use"
+            NO_DEFAULT_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_CMAKE_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
+            NO_CMAKE_FIND_ROOT_PATH
     )
     FIND_PROGRAM(JAVA_HEADER_COMPILE
-      javah
+            javah
     )
     MARK_AS_ADVANCED(JAVA_HEADER_COMPILE)
-    
-    IF(JAVA_HEADER_COMPILE)
+
+    IF (JAVA_HEADER_COMPILE)
+        SET(JAVA_USE_JAVAH TRUE CACHE BOOL "Use javah for JNI header generation" FORCE)
         MESSAGE("-- Looking for java header compiler 'javah' - found: ${JAVA_HEADER_COMPILE}")
-    ELSE()
-        MESSAGE(FATAL_ERROR "Java header compiler 'javah' not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ELSE ()
+        SET(JAVA_HEADER_COMPILE "" CACHE FILEPATH "'javah' tool to use; empty means use javac -h" FORCE)
+        SET(JAVA_USE_JAVAH FALSE CACHE BOOL "Use javah for JNI header generation" FORCE)
+        MESSAGE("-- Looking for java header compiler 'javah' - not found; using '${JAVA_COMPILE} -h' instead")
+    ENDIF ()
+ENDIF ()
 
 
-IF(NOT JAVA_DOC)
+
+IF (NOT JAVA_DOC)
     MESSAGE("-- Looking for java API Documentation Generator 'javadoc'")
     FIND_PROGRAM(JAVA_DOC
             javadoc
-        PATHS 
+            PATHS
             "${JAVA_JDK}/bin"
             "$ENV{JAVA_HOME}/bin"
             "${JAVA_JNI_JDK_PATH}/bin"
@@ -189,32 +233,32 @@ IF(NOT JAVA_DOC)
             /usr/share/java/bin
             /usr/local/bin
             /usr/local/java/bin
-        DOC "'javadoc' tool to use"
-        NO_DEFAULT_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
+            DOC "'javadoc' tool to use"
+            NO_DEFAULT_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_CMAKE_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
+            NO_CMAKE_FIND_ROOT_PATH
     )
     FIND_PROGRAM(JAVA_DOC
             javadoc
     )
     MARK_AS_ADVANCED(JAVA_DOC)
-    
-    IF(JAVA_DOC)
+
+    IF (JAVA_DOC)
         MESSAGE("-- Looking for java API Documentation Generator 'javadoc' - found: ${JAVA_DOC}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java API Documentation Generator 'javadoc' not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
 
 
-IF(NOT JAVA_RUNTIME)
+IF (NOT JAVA_RUNTIME)
     MESSAGE("-- Looking for java VM 'java'")
     FIND_PROGRAM(JAVA_RUNTIME
             java
-        PATHS 
+            PATHS
             "${JAVA_JDK}/bin"
             "$ENV{JAVA_HOME}/bin"
             "${JAVA_JNI_JDK_PATH}/bin"
@@ -225,32 +269,32 @@ IF(NOT JAVA_RUNTIME)
             /usr/share/java/bin
             /usr/local/bin
             /usr/local/java/bin
-        DOC "'java': java JVM"
-        NO_DEFAULT_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
+            DOC "'java': java JVM"
+            NO_DEFAULT_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_CMAKE_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
+            NO_CMAKE_FIND_ROOT_PATH
     )
     FIND_PROGRAM(JAVA_RUNTIME
             java
     )
     MARK_AS_ADVANCED(JAVA_RUNTIME)
-    
-    IF(JAVA_RUNTIME)
+
+    IF (JAVA_RUNTIME)
         MESSAGE("-- Looking for java VM 'java' - found: ${JAVA_RUNTIME}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java VM 'java' not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
 
 
-IF(NOT JAVA_ARCHIVE)
+IF (NOT JAVA_ARCHIVE)
     MESSAGE("-- Looking for java archiver 'jar'")
     FIND_PROGRAM(JAVA_ARCHIVE
             jar
-        PATHS 
+            PATHS
             "${JAVA_JDK}/bin"
             "$ENV{JAVA_HOME}/bin"
             "${JAVA_JNI_JDK_PATH}/bin"
@@ -261,30 +305,30 @@ IF(NOT JAVA_ARCHIVE)
             /usr/share/java/bin
             /usr/local/bin
             /usr/local/java/bin
-        DOC "'jar': java archiver"
-        NO_DEFAULT_PATH
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_CMAKE_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        NO_CMAKE_FIND_ROOT_PATH
+            DOC "'jar': java archiver"
+            NO_DEFAULT_PATH
+            NO_CMAKE_ENVIRONMENT_PATH
+            NO_CMAKE_PATH
+            NO_SYSTEM_ENVIRONMENT_PATH
+            NO_CMAKE_SYSTEM_PATH
+            NO_CMAKE_FIND_ROOT_PATH
     )
     FIND_PROGRAM(JAVA_ARCHIVE
             jar
     )
     MARK_AS_ADVANCED(JAVA_ARCHIVE)
-    
-    IF(JAVA_ARCHIVE)
+
+    IF (JAVA_ARCHIVE)
         MESSAGE("-- Looking for java archiver 'jar' - found: ${JAVA_ARCHIVE}")
-    ELSE()
+    ELSE ()
         MESSAGE(FATAL_ERROR "Java archiver 'jar' not found. ${HELP}")
-    ENDIF()
-ENDIF()
+    ENDIF ()
+ENDIF ()
 
 
-IF(NOT JAVAC_TEST_OK)
+IF (NOT JAVAC_TEST_OK)
     MESSAGE("-- Checking java compile")
-    
+
     SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
     FILE(MAKE_DIRECTORY "${JAVAC_TEST_DIR}")
     FILE(WRITE "${JAVAC_TEST_DIR}/TestClass.java" "
@@ -297,29 +341,29 @@ public class TestClass {
         System.out.print(System.getProperty(\"os.arch\"));
     }
 }")
-    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} TestClass.java 
-                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
-                    RESULT_VARIABLE javac_test_result
-                    OUTPUT_VARIABLE javac_test_output 
-                    ERROR_VARIABLE javac_test_err)
-    IF(javac_test_result)
+    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} TestClass.java
+            WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+            RESULT_VARIABLE javac_test_result
+            OUTPUT_VARIABLE javac_test_output
+            ERROR_VARIABLE javac_test_err)
+    IF (javac_test_result)
         MESSAGE(FATAL_ERROR "${JAVA_COMPILE} can't compile simple java program.
         
 NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
 Javac error message: ${javac_test_err}")
-    ENDIF()
-        
+    ENDIF ()
+
     SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
     MESSAGE("-- Checking java compile - ok")
-ENDIF()
+ENDIF ()
 
-IF(NOT JAVA_ARCH OR NOT JAVA_SYSTEM)
+IF (NOT JAVA_ARCH OR NOT JAVA_SYSTEM)
     MESSAGE("-- Checking java system properties")
     SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
-    IF(NOT EXISTS "${JAVAC_TEST_DIR}")
+    IF (NOT EXISTS "${JAVAC_TEST_DIR}")
         FILE(MAKE_DIRECTORY "${JAVAC_TEST_DIR}")
-    ENDIF()
+    ENDIF ()
     FILE(WRITE "${JAVAC_TEST_DIR}/JavaSystemPropertyTest.java" "
 public class JavaSystemPropertyTest {
     public static void main(String args[]) {
@@ -327,49 +371,49 @@ public class JavaSystemPropertyTest {
         System.out.print(property.split(\" \")[0]);
     }
 }")
-    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} JavaSystemPropertyTest.java 
-                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
-                    RESULT_VARIABLE javac_result
-                    OUTPUT_VARIABLE javac_output 
-                    ERROR_VARIABLE javac_err)
-    IF(javac_result)
+    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} JavaSystemPropertyTest.java
+            WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+            RESULT_VARIABLE javac_result
+            OUTPUT_VARIABLE javac_output
+            ERROR_VARIABLE javac_err)
+    IF (javac_result)
         MESSAGE(FATAL_ERROR "${JAVA_COMPILE} can't compile simple java program.
         
 NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
 Javac error message: ${javac_err}")
-    ENDIF()
+    ENDIF ()
 
     EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} ${JAVA_PARAMS} JavaSystemPropertyTest os.arch
-                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
-                    RESULT_VARIABLE java_result
-                    OUTPUT_VARIABLE java_output 
-                    ERROR_VARIABLE java_err)
-    IF(java_result)
+            WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+            RESULT_VARIABLE java_result
+            OUTPUT_VARIABLE java_output
+            ERROR_VARIABLE java_err)
+    IF (java_result)
         MESSAGE(FATAL_ERROR "${JAVA_RUNTIME} can't run simple java program.
         
 NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
 Javac error message: ${java_err}")
-    ENDIF()
+    ENDIF ()
     SET(JAVA_ARCH "${java_output}" CACHE INTERNAL "Java os.name")
 
     EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} ${JAVA_PARAMS} JavaSystemPropertyTest os.name
-                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
-                    RESULT_VARIABLE java_result
-                    OUTPUT_VARIABLE java_output 
-                    ERROR_VARIABLE java_err)
-    IF(java_result)
+            WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+            RESULT_VARIABLE java_result
+            OUTPUT_VARIABLE java_output
+            ERROR_VARIABLE java_err)
+    IF (java_result)
         MESSAGE(FATAL_ERROR "${JAVA_RUNTIME} can't run simple java program.
         
 NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
 Javac error message: ${java_err}")
-    ENDIF()
+    ENDIF ()
 
     SET(JAVA_SYSTEM "${java_output}" CACHE INTERNAL "Java os.arch")
     MESSAGE("-- Checking java compile - ok (arch: ${JAVA_ARCH}, system: ${JAVA_SYSTEM})")
-ENDIF()
+ENDIF ()
 
 
 # Call cmake default version

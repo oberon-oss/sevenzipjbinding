@@ -32,7 +32,6 @@ hs_err_pid*.log
 *.swp
 *.vim*
 tags
-*.tmp
 Session.vim
 
 /compile_commands.json

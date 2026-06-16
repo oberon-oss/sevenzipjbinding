@@ -472,20 +472,54 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 #                        <arg value="net.sf.sevenzip.impl.InArchiveImpl" />                                                   
 #                </exec>
 SET(JAVAH_OUTPUT_DIR ${PROJECT_BINARY_DIR}/javah)
+SET(JAVAH_CLASSES_DIR ${PROJECT_BINARY_DIR}/javah-classes)
 FILE(MAKE_DIRECTORY ${JAVAH_OUTPUT_DIR})
+FILE(MAKE_DIRECTORY ${JAVAH_CLASSES_DIR})
+
+SET(JBINDING_JAVAH_H_FILES
+        ${JAVAH_OUTPUT_DIR}/net_sf_sevenzipjbinding_impl_InArchiveImpl.h
+        ${JAVAH_OUTPUT_DIR}/net_sf_sevenzipjbinding_SevenZip.h
+        ${JAVAH_OUTPUT_DIR}/net_sf_sevenzipjbinding_impl_OutArchiveImpl.h
+)
+
 SET(JAVAH_JAVA_CLASS_LIST
-    net.sf.sevenzipjbinding.SevenZip
-    net.sf.sevenzipjbinding.impl.InArchiveImpl
-    net.sf.sevenzipjbinding.impl.OutArchiveImpl
+        net.sf.sevenzipjbinding.SevenZip
+        net.sf.sevenzipjbinding.impl.InArchiveImpl
+        net.sf.sevenzipjbinding.impl.OutArchiveImpl
 )
 
-
-add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}  
-                   DEPENDS ${SEVENZIPJBINDING_JAR}
-                   WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
-                   COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+SET(JAVAH_JAVA_SOURCE_LIST
+        ${PROJECT_SOURCE_DIR}/../jbinding-java/src/net/sf/sevenzipjbinding/SevenZip.java
+        ${PROJECT_SOURCE_DIR}/../jbinding-java/src/net/sf/sevenzipjbinding/impl/InArchiveImpl.java
+        ${PROJECT_SOURCE_DIR}/../jbinding-java/src/net/sf/sevenzipjbinding/impl/OutArchiveImpl.java
 )
+
+IF(JAVA_USE_JAVAH)
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+            COMMAND ${JAVA_HEADER_COMPILE}
+            -jni
+            -d ${JAVAH_OUTPUT_DIR}
+            -classpath ${SEVENZIPJBINDING_JAR}
+            ${JAVAH_JAVA_CLASS_LIST}
+            DEPENDS ${SEVENZIPJBINDING_JAR}
+            WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
+            COMMENT "javah: generating h-files from java classes"
+            VERBATIM
+    )
+ELSE()
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+            COMMAND ${JAVA_COMPILE}
+            ${JAVAC_COMPAT_ARGS}
+            -h ${JAVAH_OUTPUT_DIR}
+            -classpath ${SEVENZIPJBINDING_JAR}
+            -d ${JAVAH_CLASSES_DIR}
+            ${JAVAH_JAVA_SOURCE_LIST}
+            DEPENDS ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_SOURCE_LIST}
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            COMMENT "javac -h: generating h-files from java sources"
+            VERBATIM
+    )
+ENDIF()
 
 add_library(7-Zip-JBinding
             SHARED
