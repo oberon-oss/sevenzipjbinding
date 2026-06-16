@@ -200,29 +200,12 @@ SET(SEVEN_ZIP_SOURCE_FILES
         ${SEVEN_ZIP_SRC}/CPP/7zip/Common/UniqBlocks.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/Common/VirtThread.cpp
 
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveName.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveOpenCallback.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/CompressCall.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/CompressCall2.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/DefaultName.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/EnumDirItems.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/Extract.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ExtractingFilePath.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/HashCalc.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/LoadCodecs.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/OpenArchive.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/SetProperties.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/SortUtils.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/TempFiles.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/Update.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/UpdateAction.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/WorkDir.cpp
-        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ZipRegistry.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveOpenCallback.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/OpenArchive.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ExtractingFilePath.cpp
 
         ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
