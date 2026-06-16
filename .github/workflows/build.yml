@@ -90,7 +90,7 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-make
-            
+      
 
       # CMake Configuration starts.
 
@@ -105,6 +105,7 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DCMAKE_CXX_FLAGS="-std=gnu++98" \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/linux" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -113,6 +114,7 @@ jobs:
             -DJAVA_ARCHIVE="$JAVA_HOME/bin/jar" \
             -DJAVA_USE_JAVAH=FALSE \
             -DJAVA_HEADER_COMPILE="javac-h-disabled"
+
 
       - name: Configure CMake - macOS
         if: matrix.platform == 'macos'
@@ -125,6 +127,7 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DCMAKE_CXX_FLAGS="-std=gnu++98" \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/darwin" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -135,6 +138,7 @@ jobs:
             -DJAVA_HEADER_COMPILE="javac-h-disabled" \
             -DJAVA_ARCH=${{ matrix.java-arch }} \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.osx-arch }}
+          
 
       - name: Configure CMake - Windows
         if: matrix.platform == 'windows'
