@@ -61,6 +61,7 @@ jobs:
           which javac
           java -version
           javac -version
+          find "$JAVA_HOME/include" -maxdepth 2 -type f | sort
           if command -v javah >/dev/null 2>&1; then
             echo "javah found at: $(command -v javah)"
           else
@@ -86,23 +87,43 @@ jobs:
 
       - name: Configure CMake - Linux
         if: matrix.platform == 'linux'
+        shell: bash
         run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          test -f "$JAVA_HOME/include/jni.h"
+          test -f "$JAVA_HOME/include/linux/jni_md.h"
+
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_HOME="$JAVA_HOME" \
             -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
+            -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/linux" \
+            -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
+            -DJAVA_RUNTIME="$JAVA_HOME/bin/java" \
+            -DJAVA_DOC="$JAVA_HOME/bin/javadoc" \
+            -DJAVA_ARCHIVE="$JAVA_HOME/bin/jar" \
             -DJAVA_USE_JAVAH=FALSE \
             -DJAVA_HEADER_COMPILE=
 
       - name: Configure CMake - macOS
         if: matrix.platform == 'macos'
+        shell: bash
         run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          test -f "$JAVA_HOME/include/jni.h"
+          test -f "$JAVA_HOME/include/darwin/jni_md.h"
+
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_HOME="$JAVA_HOME" \
             -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
+            -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/darwin" \
+            -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
+            -DJAVA_RUNTIME="$JAVA_HOME/bin/java" \
+            -DJAVA_DOC="$JAVA_HOME/bin/javadoc" \
+            -DJAVA_ARCHIVE="$JAVA_HOME/bin/jar" \
             -DJAVA_USE_JAVAH=FALSE \
             -DJAVA_HEADER_COMPILE= \
             -DJAVA_ARCH=${{ matrix.java-arch }} \
@@ -112,12 +133,24 @@ jobs:
         if: matrix.platform == 'windows'
         shell: msys2 {0}
         run: |
+          JDK_HOME="$(cygpath -u "$JAVA_HOME")"
+
+          echo "JAVA_HOME=$JAVA_HOME"
+          echo "JDK_HOME=$JDK_HOME"
+          test -f "$JDK_HOME/include/jni.h"
+          test -f "$JDK_HOME/include/win32/jni_md.h"
+
           cmake -S . -B build \
             -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
-            -DJAVA_HOME="$JAVA_HOME" \
-            -DJAVA_JDK="$JAVA_HOME" \
+            -DJAVA_JDK="$JDK_HOME" \
+            -DJAVA_INCLUDE_PATH="$JDK_HOME/include" \
+            -DJAVA_INCLUDE_PATH2="$JDK_HOME/include/win32" \
+            -DJAVA_COMPILE="$JDK_HOME/bin/javac.exe" \
+            -DJAVA_RUNTIME="$JDK_HOME/bin/java.exe" \
+            -DJAVA_DOC="$JDK_HOME/bin/javadoc.exe" \
+            -DJAVA_ARCHIVE="$JDK_HOME/bin/jar.exe" \
             -DJAVA_USE_JAVAH=FALSE \
             -DJAVA_HEADER_COMPILE= \
             -DMINGW64=Yes
