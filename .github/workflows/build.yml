@@ -87,6 +87,7 @@ jobs:
             
 
       # CMake Configuration starts.
+
       - name: Configure CMake - Linux
         if: matrix.platform == 'linux'
         shell: bash
@@ -98,6 +99,9 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_CXX_EXTENSIONS=ON \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/linux" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -118,6 +122,9 @@ jobs:
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_CXX_EXTENSIONS=ON \
             -DJAVA_INCLUDE_PATH="$JAVA_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JAVA_HOME/include/darwin" \
             -DJAVA_COMPILE="$JAVA_HOME/bin/javac" \
@@ -144,6 +151,9 @@ jobs:
             -G "MinGW Makefiles" \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=ON \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_CXX_EXTENSIONS=ON \
             -DJAVA_INCLUDE_PATH="$JDK_HOME/include" \
             -DJAVA_INCLUDE_PATH2="$JDK_HOME/include/win32" \
             -DJAVA_COMPILE="$JDK_HOME/bin/javac.exe" \
@@ -153,6 +163,7 @@ jobs:
             -DJAVA_USE_JAVAH=FALSE \
             -DJAVA_HEADER_COMPILE="javac-h-disabled" \
             -DMINGW64=Yes
+
       # CMake Configuration ends.
 
 
