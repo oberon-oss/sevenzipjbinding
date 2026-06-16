@@ -206,6 +206,8 @@ SET(SEVEN_ZIP_SOURCE_FILES
         ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/OpenArchive.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/ExtractingFilePath.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/DefaultName.cpp
+        ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/SetProperties.cpp
 
         ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
         ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
